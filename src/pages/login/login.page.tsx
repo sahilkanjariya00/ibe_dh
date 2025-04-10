@@ -2,12 +2,32 @@ import React from 'react'
 import { Form, Field } from 'react-final-form'
 import styles from './login.module.scss'
 import { Buttoncomp, Inputcomp } from '../../stories'
+import { ERRORMESSAGES } from '../../Util/constants'
+import { useAuthContext } from '../../hooks'
 
+type LoginFormType = {
+  email: string,
+  password: string,
+}
 
 const LoginPage = () => {
+  const {dispatch} = useAuthContext();
 
-  const onSubmit = (val:any)=>{
-    console.log(val)
+  const onSubmit = (val: LoginFormType)=>{
+    dispatch({type:'login',payload:{email:val.email}});
+  }
+
+  const validationfn = (val: LoginFormType) => {
+    const errors: {email?: string, password?: string} = {};
+    
+    if(!val.email){
+      errors.email = ERRORMESSAGES.emailError;
+    }
+
+    if(!val.password){
+      errors.password = ERRORMESSAGES.passError
+    }
+    return errors;
   }
 
   return (
@@ -17,30 +37,31 @@ const LoginPage = () => {
         <h2 className={styles.formTitle}>Sign in</h2>
         <Form
           onSubmit={onSubmit}
+          validate={validationfn}
           render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <div>
+              <div className={styles.inputContainer}>
                 <Field name="email">
                       {({ input, meta }) => (
                         <div>
-                          <div className={styles.inputContainer}>
+                          <div>
                             <Inputcomp 
                               label="Email Address"
                               placeholder='Enter your email' 
                               {...input}>
                             </Inputcomp>
                           </div>
-                          {meta.touched && meta.error && <span>{meta.error}</span>}
+                          {meta.touched && meta.error && <span className='error'>{meta.error}</span>}
                         </div>
                       )}
                 </Field>
               </div>
 
-              <div>
+              <div className={styles.inputContainer}>
                 <Field name="password">
                       {({ input, meta }) => (
                         <div>
-                          <div className={styles.inputContainer}>
+                          <div>
                             <Inputcomp 
                               label="Password"
                               placeholder='Enter your password'
@@ -48,7 +69,7 @@ const LoginPage = () => {
                               {...input}>
                             </Inputcomp>
                           </div>
-                          {meta.touched && meta.error && <span>{meta.error}</span>}
+                          {meta.touched && meta.error && <span className='error'>{meta.error}</span>}
                         </div>
                       )}
                 </Field>
@@ -62,6 +83,7 @@ const LoginPage = () => {
             </form>
           )}
         />
+        <div className={styles.signup}>Create secure account. Signup</div>
       </div>
     </div>
     </>
