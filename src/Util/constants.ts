@@ -4,5 +4,6 @@ export const ERRORMESSAGES = {
 }
 
 export const ROUTES = {
-    default:'/'
+    default:'/',
+    signup:'/signup'
 }

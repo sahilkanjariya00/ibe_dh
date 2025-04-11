@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import { LoginPage } from './pages'
+import { LoginPage, SignupPage } from './pages'
 import { useAuthContext } from './hooks'
 import { ROUTES } from './Util/constants';
 
@@ -13,7 +13,10 @@ function App() {
         {state.logedIn?
           <Route path={ROUTES.default} element={<div>dashboard</div>}/>
         :
-          <Route path={ROUTES.default} element={<LoginPage/>} />
+          <>
+            <Route path={ROUTES.default} element={<LoginPage />} />
+            <Route path={ROUTES.signup} element={<SignupPage />}/>
+          </>
         }
       </Routes>
     </>

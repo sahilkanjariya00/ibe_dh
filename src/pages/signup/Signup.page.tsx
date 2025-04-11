@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
-import styles from './login.module.scss'
+import styles from './Signup.module.scss'
 import { Buttoncomp, Inputcomp } from '../../stories'
 import { ERRORMESSAGES, ROUTES } from '../../Util/constants'
 import { useAuthContext } from '../../hooks'
@@ -11,16 +11,16 @@ type LoginFormType = {
   password: string,
 }
 
-const LoginPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
   const {dispatch} = useAuthContext();
 
-  const handleSignup = (e: React.MouseEvent<HTMLElement>) => {
-    navigate(ROUTES.signup);
-  }
-
   const onSubmit = (val: LoginFormType)=>{
     dispatch({type:'login',payload:{email:val.email}});
+  }
+
+  const handleLogin = (e: React.MouseEvent<HTMLElement>) => {
+    navigate(ROUTES.default);
   }
 
   const validationfn = (val: LoginFormType) => {
@@ -89,11 +89,11 @@ const LoginPage = () => {
             </form>
           )}
         />
-        <div className={styles.signup}>Create secure account. <p onClick={handleSignup} className='link'>Signup</p></div>
+        <div className={styles.signup}><p className='link' onClick={handleLogin}>Login</p> here.</div>
       </div>
     </div>
     </>
   )
 }
 
-export default LoginPage
+export default SignupPage
