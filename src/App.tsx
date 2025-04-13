@@ -11,9 +11,13 @@ function App() {
     <>
       <Routes>
         {state.logedIn?
-          <Route path={ROUTES.default} element={<div>dashboard</div>}/>
+        <>
+        {console.log('dashboard')}
+        <Route path={ROUTES.default} element={<div>dashboard</div>}/>
+        </>
         :
           <>
+            {console.log('loginpage')}
             <Route path={ROUTES.default} element={<LoginPage />} />
             <Route path={ROUTES.signup} element={<SignupPage />}/>
           </>

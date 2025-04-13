@@ -1,12 +1,13 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
 import styles from './Signup.module.scss'
-import { Buttoncomp, Inputcomp } from '../../stories'
+import { Buttoncomp, CaptureImage, Inputcomp } from '../../stories'
 import { ERRORMESSAGES, ROUTES } from '../../Util/constants'
 import { useAuthContext } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
 
 type LoginFormType = {
+  name: string,
   email: string,
   password: string,
 }
@@ -16,7 +17,9 @@ const SignupPage = () => {
   const {dispatch} = useAuthContext();
 
   const onSubmit = (val: LoginFormType)=>{
+    navigate(ROUTES.default)
     dispatch({type:'login',payload:{email:val.email}});
+    console.log(val)
   }
 
   const handleLogin = (e: React.MouseEvent<HTMLElement>) => {
@@ -46,6 +49,24 @@ const SignupPage = () => {
           validate={validationfn}
           render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
+              <div className={styles.inputContainer}>
+                <Field name="name">
+                      {({ input, meta }) => (
+                        <div>
+                          <div>
+                            <Inputcomp 
+                              label="Name"
+                              placeholder='Enter your name'
+                              type='text' 
+                              {...input}>
+                            </Inputcomp>
+                          </div>
+                          {meta.touched && meta.error && <span className='error'>{meta.error}</span>}
+                        </div>
+                      )}
+                </Field>
+              </div>
+
               <div className={styles.inputContainer}>
                 <Field name="email">
                       {({ input, meta }) => (
@@ -80,9 +101,24 @@ const SignupPage = () => {
                       )}
                 </Field>
               </div>
+
+              <div className={styles.inputContainer}>
+                <Field name="image">
+                      {({ input, meta }) => {
+                        // console.log(input)
+                        return(
+                        <div>
+                          <div className={styles.capturePhoto}>
+                            <CaptureImage height={200} width={200} onChange={input.onChange}/>
+                          </div>
+                          {meta.touched && meta.error && <span className='error'>{meta.error}</span>}
+                        </div>
+                      )}}
+                </Field>
+              </div>
               
               <Buttoncomp
-                label='Log In'
+                label='Sgin In'
                 props={{variant: 'contained', type:'submit'}}
               ></Buttoncomp>
               
