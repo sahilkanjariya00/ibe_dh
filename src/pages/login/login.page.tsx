@@ -5,6 +5,7 @@ import { Buttoncomp, Inputcomp } from '../../stories'
 import { ERRORMESSAGES, ROUTES } from '../../Util/constants'
 import { useAuthContext } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
+import { saveToSessionStorage } from '../../Util/helper'
 
 type LoginFormType = {
   email: string,
@@ -20,6 +21,7 @@ const LoginPage = () => {
   }
 
   const onSubmit = (val: LoginFormType)=>{
+    saveToSessionStorage('ld',{email: val.email, logedIn: true})
     dispatch({type:'login',payload:{email:val.email}});
   }
 

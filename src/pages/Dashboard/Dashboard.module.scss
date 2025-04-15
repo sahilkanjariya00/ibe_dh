@@ -1,0 +1,55 @@
+@import '../../styles/variables';
+
+.container{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+
+    .upperConainer{
+        display: flex;
+        padding-top: 20px;
+
+        .contect{
+            width: 94%;
+            text-align: center;
+            justify-content: center;
+        }
+        button{
+        }
+    }
+
+
+    .inContainer{
+        width: 80%;
+        height: 80vh;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 0.5rem;
+        background: $white;
+        box-shadow: 0 10px 20px $black1;
+        padding: 20px;
+        overflow: auto;
+    }
+
+    .card{
+        background-color: $plainblack;
+        margin-bottom: 20px;
+        width: 100%;
+        height: 150px;
+        padding: 20px;
+
+        .name{
+            font-size: 40px;
+        }
+        .email{
+            font-size: 20px;
+        }
+
+        .name, .email{
+            color: $white;
+        }
+    }
+}
