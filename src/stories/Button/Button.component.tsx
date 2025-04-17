@@ -12,6 +12,7 @@ const Buttoncomp = ({label,onClick,props}: ButtonType)  => {
     <>
         <StyledButton
             onClick={onClick}
+            className={props?.className}
             {...props}
         >
             {label}

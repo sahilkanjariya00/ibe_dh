@@ -21,7 +21,7 @@
 
     .inContainer{
         width: 80%;
-        height: 80vh;
+        // height: 80vh;
         margin: 0;
         position: absolute;
         top: 50%;
@@ -32,6 +32,30 @@
         box-shadow: 0 10px 20px $black1;
         padding: 20px;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
+
+        ul{
+            list-style: none;
+        }
+
+        .title{
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        >div{
+            padding: 10px;
+            border: 1px solid black;
+            border-style: dashed;
+            width: 100%;
+        }
+
+        .firstStep{
+            .upload{
+                margin-top: 10px;
+            }
+        }
     }
 
     .card{

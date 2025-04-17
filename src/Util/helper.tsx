@@ -9,3 +9,13 @@ export const getFromSessionStorage = (key: string) => {
 export const removeFromSessionStorage = (key: string) => {
     sessionStorage.removeItem(key);
 }
+
+export const saveFile = async (blob:any) => {
+    const a = document.createElement('a');
+    a.download = 'my-file.png';
+    a.href = URL.createObjectURL(blob);
+    a.addEventListener('click', (e) => {
+      setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+    });
+    a.click();
+};

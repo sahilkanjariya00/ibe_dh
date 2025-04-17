@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import style from './Dashboard.module.scss'
-import { Buttoncomp } from '../../stories';
+import { Buttoncomp, SingleFileUploader } from '../../stories';
 import { useAuthContext } from '../../hooks';
-import { removeFromSessionStorage } from '../../Util/helper';
+import { removeFromSessionStorage, saveFile } from '../../Util/helper';
 
 type UserDataType = {
   uuid: string,
@@ -21,6 +21,7 @@ const DATA = [
 const Dashboard = () => {
   const {state,dispatch} = useAuthContext();
   const [userData, setUserData] = useState<UserDataType[]>();
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(()=>{
     setUserData(DATA);
@@ -31,21 +32,36 @@ const Dashboard = () => {
     dispatch({type: 'logout'});
   }
 
+  const handlePubKeyGeneration = () => {
+    if(file){
+      const blob = new Blob([file], {type : 'image/png'});
+      saveFile(blob);
+    }
+
+  }
+
   return (
     <div className={style.container}>
       <div className={style.upperConainer}>
-        <h2 className={style.contect}>Contect Directory</h2>
+        <h2 className={style.contect}>Establish Diffie Hellman Key</h2>
         <Buttoncomp label='Logout' onClick={handleLogOut}></Buttoncomp>
       </div>
       <div className={style.inContainer}>
-        {
-          userData?.map((data)=>
-            <div key={data.uuid} className={style.card}>
-              <p className={style.name}>{data.name}</p>
-              <p className={style.email}>{data.email}</p>
-            </div>
-          )
-        }
+        <div className={style.firstStep}>
+          <div className={style.title}>Step 1: Upload Image</div>
+          <SingleFileUploader onValueChange={setFile} />
+          {
+            file?
+              <Buttoncomp label='Upload' onClick={handlePubKeyGeneration} props={{className:style.upload}}/>
+            :<></>
+          }
+        </div>
+        <div className={style.secondStep}>
+          <div className={style.title}>Step 2: Generate half diffie hellman & Encrypt with public key</div>
+        </div>
+        <div className={style.thirdStep}>
+          <div className={style.title}>Step 3: Upload second half diffie hellman and generate the shared secreate</div>
+        </div>
       </div>
     </div>
   )
