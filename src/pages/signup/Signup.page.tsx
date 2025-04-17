@@ -5,11 +5,13 @@ import { Buttoncomp, CaptureImage, Inputcomp } from '../../stories'
 import { ERRORMESSAGES, ROUTES } from '../../Util/constants'
 import { useAuthContext } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
+import { callRegisterPost } from '../../APIs/Register.api'
 
 type LoginFormType = {
   name: string,
   email: string,
   password: string,
+  image: File
 }
 
 const SignupPage = () => {
@@ -17,9 +19,21 @@ const SignupPage = () => {
   const {dispatch} = useAuthContext();
 
   const onSubmit = (val: LoginFormType)=>{
-    navigate(ROUTES.default)
-    dispatch({type:'login',payload:{email:val.email}});
-    console.log(val)
+    const registerData = new FormData();
+    registerData.append('email',val.email);
+    registerData.append('password',val.password);
+    registerData.append('image',val.image);
+    
+    callRegisterPost(registerData).then((resp)=>{
+      console.log(resp);
+      navigate(ROUTES.default)
+      dispatch({type:'login',payload:{email:val.email}});
+      console.log(val)
+    }).
+    catch((err)=>{
+      console.log(err)
+    });
+
   }
 
   const handleLogin = (e: React.MouseEvent<HTMLElement>) => {
