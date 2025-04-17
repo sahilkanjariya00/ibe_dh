@@ -10,9 +10,9 @@ export const removeFromSessionStorage = (key: string) => {
     sessionStorage.removeItem(key);
 }
 
-export const saveFile = async (blob:any) => {
+export const saveFile = async (blob:any, fileName: string) => {
     const a = document.createElement('a');
-    a.download = 'my-file.png';
+    a.download = fileName;
     a.href = URL.createObjectURL(blob);
     a.addEventListener('click', (e) => {
       setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
