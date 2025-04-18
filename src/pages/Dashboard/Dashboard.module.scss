@@ -76,4 +76,28 @@
             color: $white;
         }
     }
+
+    .popup{
+        width: 800px;
+        height: 500px;
+        background-color: $white;
+        border-radius: 10px;
+
+        .title{
+            padding: 10px;
+            border-bottom: 1px solid $plainblack;
+        }
+
+        .content{
+            padding: 10px;
+
+            .keySection{
+                margin-bottom: 10px;
+
+                .keytitle{
+                    font-weight: bold;
+                }
+            }
+        }
+    }
 }

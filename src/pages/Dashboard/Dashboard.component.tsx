@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import style from './Dashboard.module.scss'
-import { Buttoncomp, SingleFileUploader } from '../../stories';
+import { BackDrop, Buttoncomp, SingleFileUploader } from '../../stories';
 import { useAuthContext } from '../../hooks';
 import { removeFromSessionStorage, saveFile } from '../../Util/helper';
 import { decryptWithIBE, encryptWithIBE, readPEMFile } from '../../Util/ibeCrypto';
@@ -30,6 +30,8 @@ const Dashboard = () => {
 
   // DH States
   const [myKeys, setMyKeys] = useState<{ privateKey: Uint8Array, publicKey: Uint8Array } | null>(null);
+
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const loadPEM = async () => {
@@ -71,9 +73,61 @@ const Dashboard = () => {
     }
   }, [received]);
 
+  const KeyContent = () => {
+    return <div className={style.popup}>
+      <div className={style.title}>
+        <h2>Shared Secreate Key</h2>
+      </div>
+      <div className={style.content}>
+        <div className={style.keySection}>
+          {myKeys?.privateKey && 
+            <>
+              <div className={style.keytitle}>Private Key (alpha or beta): </div>
+              <p>{btoa(String.fromCharCode(...myKeys.privateKey))}</p>
+            </>
+          }
+        </div>
+        <div className={style.keySection}>
+          {decrypted && 
+            <>
+              <div className={style.keytitle}>Recived half key: </div>
+              <p>{btoa(String.fromCharCode(...(decrypted as Uint8Array<ArrayBuffer>)))}</p>
+            </>
+          }
+        </div>
+        <div className={style.keySection}>
+          {sharedSecret && 
+            <>
+              <div className={style.keytitle}>Calculated Shared Secreate: </div>
+              <p>{btoa(String.fromCharCode(...sharedSecret))}</p>
+            </>
+          }
+        </div>
+        <div className={style.keySection}>
+          <Buttoncomp label='Download shared secrete key' onClick={handleSharedKeyDown}/>
+        </div>
+      </div>
+    </div>
+  }
+
+  const handleSharedKeyDown = () => {
+    if(sharedSecret){
+      const pemString = `-----BEGIN SHARED SECRET-----\n${btoa(String.fromCharCode(...sharedSecret))}\n-----END SHARED SECRET-----`;
+      const blob = new Blob([pemString], { type: 'application/x-pem-file' });
+      saveFile(blob, 'sharedKey.pem');
+
+      // const blob = new Blob([btoa(String.fromCharCode(...sharedSecret))], { type: 'text/plain' });
+      // saveFile(blob, 'sharedKey.txt');
+    }
+  }
+
   const handleLogOut = () => {
     removeFromSessionStorage('ld');
     dispatch({type: 'logout'});
+  }
+
+  const handleClose = () => {
+    setOpen((prev)=>!prev);
   }
 
   const handlePubKeyGeneration = () => {
@@ -116,6 +170,8 @@ const Dashboard = () => {
     if (!myKeys) return;
     const secret = computeSharedSecret(theirPublic, myKeys.privateKey);
     setSharedSecret(secret);
+
+    handleClose();
   };
 
   return (
@@ -160,6 +216,12 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <BackDrop  
+        open={open} 
+        handleClose={handleClose}
+        child={<KeyContent/>}
+      />
     </div>
   )
 }
