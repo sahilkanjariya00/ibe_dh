@@ -4,6 +4,7 @@ import { Buttoncomp, SingleFileUploader } from '../../stories';
 import { useAuthContext } from '../../hooks';
 import { removeFromSessionStorage, saveFile } from '../../Util/helper';
 import { decryptWithIBE, encryptWithIBE, readPEMFile } from '../../Util/ibeCrypto';
+import { computeSharedSecret, generateDHKeys } from '../../Util/dh';
 
 type EncryptedType = {
   iv: string,
@@ -19,17 +20,21 @@ const Dashboard = () => {
   const [publicKeyPEM, setPublicKeyPEM] = useState('');
   const [encrypted, setEncrypted] = useState<string | EncryptedType>('');
 
+  // IBE States
   const [priKey, setPriKey] = useState<File | null>(null);
   const [privateKeyPEM, setPrivateKeyPEM] = useState('');
-  const [decrypted, setDecrypted] = useState('');
+  const [decrypted, setDecrypted] = useState<Uint8Array<ArrayBuffer> | string>('');
   const [received, setReceived] = useState<File | null>(null);
   const [recivedEncryptedContent, setRecivedEncryptedContent] = useState<string | EncryptedType>('');
+  const [sharedSecret, setSharedSecret] = useState<Uint8Array | null>(null);
+
+  // DH States
+  const [myKeys, setMyKeys] = useState<{ privateKey: Uint8Array, publicKey: Uint8Array } | null>(null);
 
   useEffect(() => {
     const loadPEM = async () => {
       if (pubKey) {
         const pem = await readPEMFile(pubKey);
-        console.log('pem: ',pem)
         setPublicKeyPEM(pem);
       }
     };
@@ -41,7 +46,6 @@ const Dashboard = () => {
     const loadPEM = async () => {
       if (priKey) {
         const pem = await readPEMFile(priKey);
-        console.log('pem: ',pem)
         setPrivateKeyPEM(pem);
       }
     };
@@ -80,9 +84,11 @@ const Dashboard = () => {
   }
 
   const handleDHHalfKeyGeneration = async () => {
+    const keys = generateDHKeys();
+    setMyKeys(keys);
+    
     try {
-      const encryptedData = await encryptWithIBE(publicKeyPEM, 'sahil');
-      console.log('encryptedData: ',encryptedData)
+      const encryptedData = await encryptWithIBE(publicKeyPEM, String.fromCharCode(...keys.publicKey));
       const blob = new Blob([JSON.stringify(encryptedData, null, 2)], {
         type: 'application/json',
       });
@@ -96,11 +102,20 @@ const Dashboard = () => {
   const handleDHHalfKeyDecryption = async () => {
     try {
       const decryptedData = await decryptWithIBE(privateKeyPEM,(recivedEncryptedContent as EncryptedType).iv,(recivedEncryptedContent as EncryptedType).data,(recivedEncryptedContent as EncryptedType).ephemeralPublicKey);
-      console.log(decryptedData)
-      setDecrypted(decryptedData);
+      const byteArray = new Uint8Array(
+        [...decryptedData].map(c => c.charCodeAt(0))
+      );
+      setDecrypted(byteArray);
+      handleComputeSecret(byteArray);
     } catch (err) {
       console.error('Decryption error:', err);
     }
+  };
+
+  const handleComputeSecret = (theirPublic: Uint8Array) => {
+    if (!myKeys) return;
+    const secret = computeSharedSecret(theirPublic, myKeys.privateKey);
+    setSharedSecret(secret);
   };
 
   return (
