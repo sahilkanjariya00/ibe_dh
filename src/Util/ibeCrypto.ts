@@ -29,9 +29,9 @@ export async function importPrivateKey(pem: string): Promise<CryptoKey> {
     );
 }
 
+// Encrypt data with IBE public key.
 export async function encryptWithIBE(publicKeyPEM: string, message: string) {
     const publicKey = await importPublicKey(publicKeyPEM);
-    console.log('privateKey importPublicKey: ',publicKey);
 
     // Generate temporary ECDH key pair
     const tempKeyPair = await crypto.subtle.generateKey(
@@ -39,7 +39,6 @@ export async function encryptWithIBE(publicKeyPEM: string, message: string) {
     true,
     ["deriveKey"]
     );
-    console.log('tempKeyPair: ',tempKeyPair);
 
     // Derive shared key (from temp private and their public)
     const aesKey = await crypto.subtle.deriveKey(
@@ -52,7 +51,6 @@ export async function encryptWithIBE(publicKeyPEM: string, message: string) {
     true,
     ["encrypt"]
     );
-    console.log('aes key: ',aesKey);
 
 
     const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV for AES-GCM
@@ -73,6 +71,7 @@ export async function encryptWithIBE(publicKeyPEM: string, message: string) {
       
 }
 
+// Decrypt data with IBE private key
 export async function decryptWithIBE(privateKeyPEM: string, ivB64: string, dataB64: string, senderPubKeyB64: string) {
     const privateKey = await importPrivateKey(privateKeyPEM);
 
@@ -111,6 +110,13 @@ export async function decryptWithIBE(privateKeyPEM: string, ivB64: string, dataB
 
 export const readPEMFile = async (file: File): Promise<string> => {
     const text = await file.text();
+    return text
+      .replace(/-----BEGIN [\w\s]+-----/, '')
+      .replace(/-----END [\w\s]+-----/, '')
+      .replace(/\s+/g, '');
+};
+
+export const readPEMText = async (text: string): Promise<string> => {
     return text
       .replace(/-----BEGIN [\w\s]+-----/, '')
       .replace(/-----END [\w\s]+-----/, '')
