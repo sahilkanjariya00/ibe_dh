@@ -15,11 +15,9 @@ import {
   readPEMText,
 } from "../../Util/ibeCrypto";
 import { computeSharedSecret, generateDHKeys } from "../../Util/dh";
-import {
-  decryptPrivateKey,
-  decryptPrivateKeyLocally,
-  encryptPrivateKeyLocally,
-} from "../../Util/PrivateKey";
+import { decryptPrivateKeyLocally } from "../../Util/PrivateKey";
+import { callVerifyPost } from "../../APIs/Register.api";
+import { Snackbar } from "@mui/material";
 
 type EncryptedType = {
   iv: string;
@@ -30,6 +28,8 @@ type EncryptedType = {
 const Dashboard = () => {
   const { state, dispatch } = useAuthContext();
   const [file, setFile] = useState<File | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState("");
 
   const [pubKey, setPubKey] = useState<File | null>(null);
   const [publicKeyPEM, setPublicKeyPEM] = useState("");
@@ -55,13 +55,6 @@ const Dashboard = () => {
   } | null>(null);
 
   const [open, setOpen] = useState(false);
-
-  // useEffect(()=>{
-  //   const enc = "9d0f9daeaf7a7c98b9920c60a9d4faf26eece5ff4925d3611cb7ab8066f7b17eeff6764869c17f5d6953e0fa2d26c3227998206b8d74a29b1bafa14b2d4df3339ce19b0f0c3a1067eb944df1fb7c6b43f897a8fcf9f2d4b5250704b5cf6504e29f560a00afecb6c2304de90ff32823c7e408f8dd4f1c428a259b55cc43441ef977931833bf1dc2bdea220aaf0ae2c83dc1dc0f0a066248e017b4ca3b321040657f59a2940502ae332013819a2be43f3633d12709b02be39726c2cd2c5f86bd49bea1c7c6503c62959b07ee720b65edf2d74a71556ff28f5e82921ce380035f9278b178488f976fcfb269616729d7bd03e363d984f611f9b0ef708edf89df61cdfbf0bf7ff12d732dd6f5e9c887";
-  //   const salt = "7d7f668848b46cf5621dbb13572c59b2"
-  //   const pass = "abc";
-  //   handleDecryption(enc,salt,pass);
-  // })
 
   useEffect(() => {
     const loadPEM = async () => {
@@ -166,6 +159,7 @@ const Dashboard = () => {
     );
   };
 
+  // Decrypt private key uploaded from machine.
   const handleDecryptFromFile = async (jsonData: {
     encrypted: string;
     salt: string;
@@ -207,34 +201,32 @@ const Dashboard = () => {
 
   const handlePubKeyGeneration = () => {
     if (file) {
-      const blob = new Blob([file], { type: "image/png" });
-      saveFile(blob, "my-file.png");
+      // const verifyData = new FormData();
+      // verifyData.append("image", file);
+      // verifyData.append("email", state.payload.email);
+
+      // callVerifyPost(verifyData)
+      //   .then((resp) => {
+      //     const blob = new Blob([resp.data.public_key], {
+      //       type: "application/x-pem-file",
+      //     });
+      //     saveFile(blob, "publicKey.pem");
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+
+      const blob = new Blob(
+        [
+          "-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAER+pgY3Hqykg/bgLHpsfs9Aj3LJOaBTjNCImGJWZUVTH/vBMhqVrHBG4b1ywORJnbvRXEJi5ZGqKCCr4ULSbpjw==-----END PUBLIC KEY-----",
+        ],
+        { type: "application/x-pem-file" }
+      );
+      saveFile(blob, "publicKey.pem");
+      setAlertContent("Public key is generated.");
+      setShowAlert(true);
     }
   };
-
-  // Handles the private key decryption after receiving in the api
-  async function handleDecryption(
-    encrypted: string,
-    salt: string,
-    password: string
-  ) {
-    try {
-      const privateKeyPEM = await decryptPrivateKey(encrypted, salt, password);
-
-      const { encryptedHex, saltHex } = await encryptPrivateKeyLocally(
-        privateKeyPEM,
-        password
-      );
-      const blob = new Blob(
-        [JSON.stringify({ encrypted: encryptedHex, salt: saltHex }, null, 2)],
-        { type: "application/json" }
-      );
-      saveFile(blob, "encrypted_private_key.json");
-      // Now you can use this PEM with your crypto functions
-    } catch (error) {
-      console.error("Decryption failed:", error);
-    }
-  }
 
   const handleDHHalfKeyGeneration = async () => {
     const keys = generateDHKeys();
@@ -248,7 +240,9 @@ const Dashboard = () => {
       const blob = new Blob([JSON.stringify(encryptedData, null, 2)], {
         type: "application/json",
       });
-      saveFile(blob, "encrypted-data.json");
+      setAlertContent("Half Diffie hellman key generated.");
+      setShowAlert(true);
+      saveFile(blob, "encryptedData.json");
       setEncrypted(encryptedData);
     } catch (err) {
       console.error("Encryption error:", err);
@@ -276,13 +270,29 @@ const Dashboard = () => {
   const handleComputeSecret = (theirPublic: Uint8Array) => {
     if (!myKeys) return;
     const secret = computeSharedSecret(theirPublic, myKeys.privateKey);
+    setAlertContent("Shared secrete key is calculated.");
     setSharedSecret(secret);
+    setShowAlert(true);
 
     handleClose();
   };
 
+  const handleReload = () => {
+    window.location.reload();
+  };
+
   return (
     <div className={style.container}>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        open={showAlert}
+        onClose={() => {
+          setShowAlert(false);
+        }}
+        message={alertContent}
+        key={alertContent}
+        autoHideDuration={6000}
+      />
       <div className={style.upperConainer}>
         <h2 className={style.contect}>Establish Diffie Hellman Key</h2>
         <Buttoncomp label="Logout" onClick={handleLogOut}></Buttoncomp>
@@ -293,7 +303,7 @@ const Dashboard = () => {
           <SingleFileUploader onValueChange={setFile} />
           {file ? (
             <Buttoncomp
-              label="Upload"
+              label="Get Public Key"
               onClick={handlePubKeyGeneration}
               props={{ className: style.upload }}
             />
@@ -322,7 +332,7 @@ const Dashboard = () => {
             secrete
           </div>
           <div>
-            <div>
+            <div className={style.password}>
               <Inputcomp
                 label="Password"
                 placeholder="Enter your password"
@@ -332,18 +342,27 @@ const Dashboard = () => {
               ></Inputcomp>
             </div>
             {password && (
-              <div>
-                <SingleFileUploader onValueChange={setPriKey} />
-              </div>
+              <>
+                <div className={style.title}>Upload your IBE private key</div>
+                <div>
+                  <SingleFileUploader onValueChange={setPriKey} />
+                </div>
+              </>
             )}
             <div>
+              <div className={style.title}>Upload half diffie hellman key</div>
               <SingleFileUploader onValueChange={setReceived} />
               {priKey && received && password ? (
-                <Buttoncomp
-                  label="Generate shared secrete key"
-                  onClick={handleDHHalfKeyDecryption}
-                  props={{ className: style.upload }}
-                />
+                <div className={style.buttons}>
+                  <Buttoncomp
+                    label="Generate shared secrete key"
+                    onClick={handleDHHalfKeyDecryption}
+                  />
+                  <Buttoncomp
+                    label="Generate another key."
+                    onClick={handleReload}
+                  />
+                </div>
               ) : (
                 <></>
               )}
