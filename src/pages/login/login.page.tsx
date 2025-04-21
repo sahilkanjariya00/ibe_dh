@@ -2,8 +2,10 @@ import React from 'react'
 import { Form, Field } from 'react-final-form'
 import styles from './login.module.scss'
 import { Buttoncomp, Inputcomp } from '../../stories'
-import { ERRORMESSAGES } from '../../Util/constants'
+import { ERRORMESSAGES, ROUTES } from '../../Util/constants'
 import { useAuthContext } from '../../hooks'
+import { useNavigate } from 'react-router-dom'
+import { saveToSessionStorage } from '../../Util/helper'
 
 type LoginFormType = {
   email: string,
@@ -11,9 +13,15 @@ type LoginFormType = {
 }
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const {dispatch} = useAuthContext();
 
+  const handleSignup = (e: React.MouseEvent<HTMLElement>) => {
+    navigate(ROUTES.signup);
+  }
+
   const onSubmit = (val: LoginFormType)=>{
+    saveToSessionStorage('ld',{email: val.email, logedIn: true})
     dispatch({type:'login',payload:{email:val.email}});
   }
 
@@ -83,7 +91,7 @@ const LoginPage = () => {
             </form>
           )}
         />
-        <div className={styles.signup}>Create secure account. Signup</div>
+        <div className={styles.signup}>Create secure account. <p onClick={handleSignup} className='link'>Signup</p></div>
       </div>
     </div>
     </>

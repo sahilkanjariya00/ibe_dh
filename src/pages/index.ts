@@ -1,5 +1,10 @@
 import LoginPage from "./login";
+import SignupPage from "./signup";
+import Dashboard from "./Dashboard";
+
 
 export {
-    LoginPage
+    LoginPage,
+    SignupPage,
+    Dashboard
 }

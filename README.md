@@ -52,3 +52,11 @@ export default tseslint.config({
   },
 })
 ```
+## Commands to run docker
+# Build image
+docker build -t my-vite-app .
+
+# Run container
+docker run -p 8080:80 my-vite-app
+
+## Diffie hellman logic
