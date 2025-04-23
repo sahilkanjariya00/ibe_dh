@@ -7,7 +7,10 @@ import {
   SingleFileUploader,
 } from "../../stories";
 // import { useAuthContext } from "../../hooks";
-import { removeFromSessionStorage, saveFile } from "../../Util/helper";
+import { 
+  // removeFromSessionStorage, 
+  saveFile 
+} from "../../Util/helper";
 import {
   decryptWithIBE,
   encryptWithIBE,
@@ -16,7 +19,7 @@ import {
 } from "../../Util/ibeCrypto";
 import { computeSharedSecret, generateDHKeys } from "../../Util/dh";
 import { decryptPrivateKeyLocally } from "../../Util/PrivateKey";
-import { callVerifyPost } from "../../APIs/Register.api";
+// import { callVerifyPost } from "../../APIs/Register.api";
 import { Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../Util/constants";
@@ -36,6 +39,7 @@ const Dashboard = () => {
 
   const [pubKey, setPubKey] = useState<File | null>(null);
   const [publicKeyPEM, setPublicKeyPEM] = useState("");
+  // @ts-ignore
   const [encrypted, setEncrypted] = useState<string | EncryptedType>("");
 
   // IBE States

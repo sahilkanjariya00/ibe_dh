@@ -5,7 +5,7 @@ import { Buttoncomp, CaptureImage, Inputcomp } from "../../stories";
 import { ERRORMESSAGES, ROUTES } from "../../Util/constants";
 // import { useAuthContext } from "../../hooks";
 import { useNavigate } from "react-router-dom";
-import { callRegisterPost } from "../../APIs/Register.api";
+// import { callRegisterPost } from "../../APIs/Register.api";
 import {
   decryptPrivateKey,
   encryptPrivateKeyLocally,
@@ -22,6 +22,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   // const { dispatch } = useAuthContext();
 
+  // @ts-ignore
   const onSubmit = (val: LoginFormType) => {
     // const registerData = new FormData();
     // registerData.append("email", val.email);
@@ -74,6 +75,7 @@ const SignupPage = () => {
     }
   }
 
+  // @ts-ignore
   const handleDashboard = (e: React.MouseEvent<HTMLElement>) => {
     navigate(ROUTES.default);
   };
