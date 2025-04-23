@@ -6,7 +6,7 @@ import {
   Inputcomp,
   SingleFileUploader,
 } from "../../stories";
-import { useAuthContext } from "../../hooks";
+// import { useAuthContext } from "../../hooks";
 import { removeFromSessionStorage, saveFile } from "../../Util/helper";
 import {
   decryptWithIBE,
@@ -18,6 +18,8 @@ import { computeSharedSecret, generateDHKeys } from "../../Util/dh";
 import { decryptPrivateKeyLocally } from "../../Util/PrivateKey";
 import { callVerifyPost } from "../../APIs/Register.api";
 import { Snackbar } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../Util/constants";
 
 type EncryptedType = {
   iv: string;
@@ -26,7 +28,8 @@ type EncryptedType = {
 };
 
 const Dashboard = () => {
-  const { state, dispatch } = useAuthContext();
+  // const { state, dispatch } = useAuthContext();
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
@@ -190,9 +193,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogOut = () => {
-    removeFromSessionStorage("ld");
-    dispatch({ type: "logout" });
+  const handleRegister = () => {
+    // removeFromSessionStorage("ld");
+    // dispatch({ type: "logout" });
+    navigate(ROUTES.signup)
   };
 
   const handleClose = () => {
@@ -295,7 +299,7 @@ const Dashboard = () => {
       />
       <div className={style.upperConainer}>
         <h2 className={style.contect}>Establish Diffie Hellman Key</h2>
-        <Buttoncomp label="Logout" onClick={handleLogOut}></Buttoncomp>
+        <Buttoncomp label="Register" onClick={handleRegister}></Buttoncomp>
       </div>
       <div className={style.inContainer}>
         <div className={style.firstStep}>

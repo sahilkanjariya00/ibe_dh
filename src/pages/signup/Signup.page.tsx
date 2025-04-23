@@ -3,7 +3,7 @@ import { Form, Field } from "react-final-form";
 import styles from "./Signup.module.scss";
 import { Buttoncomp, CaptureImage, Inputcomp } from "../../stories";
 import { ERRORMESSAGES, ROUTES } from "../../Util/constants";
-import { useAuthContext } from "../../hooks";
+// import { useAuthContext } from "../../hooks";
 import { useNavigate } from "react-router-dom";
 import { callRegisterPost } from "../../APIs/Register.api";
 import {
@@ -20,7 +20,7 @@ type LoginFormType = {
 
 const SignupPage = () => {
   const navigate = useNavigate();
-  const { dispatch } = useAuthContext();
+  // const { dispatch } = useAuthContext();
 
   const onSubmit = (val: LoginFormType) => {
     // const registerData = new FormData();
@@ -48,7 +48,7 @@ const SignupPage = () => {
         "abc"
       );
       navigate(ROUTES.default);
-      dispatch({ type: "login", payload: { email: val.email } });
+      // dispatch({ type: "login", payload: { email: val.email } });
   };
 
   // Handles the private key decryption after receiving in the api
@@ -74,7 +74,7 @@ const SignupPage = () => {
     }
   }
 
-  const handleLogin = (e: React.MouseEvent<HTMLElement>) => {
+  const handleDashboard = (e: React.MouseEvent<HTMLElement>) => {
     navigate(ROUTES.default);
   };
 
@@ -170,8 +170,8 @@ const SignupPage = () => {
             )}
           />
           <div className={styles.signup}>
-            <p className="link" onClick={handleLogin}>
-              Login
+            <p className="link" onClick={handleDashboard}>
+              Dashboard
             </p>{" "}
             here.
           </div>
