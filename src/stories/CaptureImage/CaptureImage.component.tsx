@@ -14,6 +14,7 @@ function CaptureImage(props:CaptureImagePropType) {
     const [imgSrc, setImgSrc] = useState<React.Ref<Webcam> | null>(null);
 
     const capture = useCallback(() => {
+        // @ts-ignore
         const imageSrc = imageRef?.current?.getScreenshot();
         setImgSrc(imageSrc);
         if(props.onChange){
@@ -33,6 +34,7 @@ function CaptureImage(props:CaptureImagePropType) {
             <StyledImageContainer>
                 {
                     imgSrc?(
+                        // @ts-ignore
                         <img src={imgSrc} alt='webcam' className='image'/>
                     ):
                     (

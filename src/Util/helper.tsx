@@ -14,6 +14,7 @@ export const saveFile = async (blob:any, fileName: string) => {
     const a = document.createElement('a');
     a.download = fileName;
     a.href = URL.createObjectURL(blob);
+    // @ts-ignore
     a.addEventListener('click', (e) => {
       setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
     });

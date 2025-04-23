@@ -6,8 +6,11 @@ import {
   Inputcomp,
   SingleFileUploader,
 } from "../../stories";
-import { useAuthContext } from "../../hooks";
-import { removeFromSessionStorage, saveFile } from "../../Util/helper";
+// import { useAuthContext } from "../../hooks";
+import { 
+  // removeFromSessionStorage, 
+  saveFile 
+} from "../../Util/helper";
 import {
   decryptWithIBE,
   encryptWithIBE,
@@ -16,8 +19,10 @@ import {
 } from "../../Util/ibeCrypto";
 import { computeSharedSecret, generateDHKeys } from "../../Util/dh";
 import { decryptPrivateKeyLocally } from "../../Util/PrivateKey";
-import { callVerifyPost } from "../../APIs/Register.api";
+// import { callVerifyPost } from "../../APIs/Register.api";
 import { Snackbar } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../Util/constants";
 
 type EncryptedType = {
   iv: string;
@@ -26,13 +31,15 @@ type EncryptedType = {
 };
 
 const Dashboard = () => {
-  const { state, dispatch } = useAuthContext();
+  // const { state, dispatch } = useAuthContext();
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
 
   const [pubKey, setPubKey] = useState<File | null>(null);
   const [publicKeyPEM, setPublicKeyPEM] = useState("");
+  // @ts-ignore
   const [encrypted, setEncrypted] = useState<string | EncryptedType>("");
 
   // IBE States
@@ -47,6 +54,7 @@ const Dashboard = () => {
   >("");
   const [sharedSecret, setSharedSecret] = useState<Uint8Array | null>(null);
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   // DH States
   const [myKeys, setMyKeys] = useState<{
@@ -177,6 +185,10 @@ const Dashboard = () => {
     setPassword(e.target.value);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
   const handleSharedKeyDown = () => {
     if (sharedSecret) {
       const pemString = `-----BEGIN SHARED SECRET-----\n${btoa(
@@ -190,9 +202,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogOut = () => {
-    removeFromSessionStorage("ld");
-    dispatch({ type: "logout" });
+  const handleRegister = () => {
+    // removeFromSessionStorage("ld");
+    // dispatch({ type: "logout" });
+    navigate(ROUTES.signup);
   };
 
   const handleClose = () => {
@@ -203,7 +216,7 @@ const Dashboard = () => {
     if (file) {
       // const verifyData = new FormData();
       // verifyData.append("image", file);
-      // verifyData.append("email", state.payload.email);
+      // verifyData.append("email", email);
 
       // callVerifyPost(verifyData)
       //   .then((resp) => {
@@ -295,13 +308,22 @@ const Dashboard = () => {
       />
       <div className={style.upperConainer}>
         <h2 className={style.contect}>Establish Diffie Hellman Key</h2>
-        <Buttoncomp label="Logout" onClick={handleLogOut}></Buttoncomp>
+        <Buttoncomp label="Register" onClick={handleRegister}></Buttoncomp>
       </div>
       <div className={style.inContainer}>
         <div className={style.firstStep}>
           <div className={style.title}>Step 1: Upload Image</div>
+          <div className={style.email}>
+            <Inputcomp
+              label="Email"
+              placeholder="Enter your Email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+            ></Inputcomp>
+          </div>
           <SingleFileUploader onValueChange={setFile} />
-          {file ? (
+          {file && email ? (
             <Buttoncomp
               label="Get Public Key"
               onClick={handlePubKeyGeneration}

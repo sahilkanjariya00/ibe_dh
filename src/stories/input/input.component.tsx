@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from 'react'
 import { TextFieldProps } from '@mui/material'
 import { StyledInput } from './input.styled'

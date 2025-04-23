@@ -16,6 +16,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const {dispatch} = useAuthContext();
 
+  // @ts-ignore
   const handleSignup = (e: React.MouseEvent<HTMLElement>) => {
     navigate(ROUTES.signup);
   }
