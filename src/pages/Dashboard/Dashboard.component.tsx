@@ -50,6 +50,7 @@ const Dashboard = () => {
   >("");
   const [sharedSecret, setSharedSecret] = useState<Uint8Array | null>(null);
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   // DH States
   const [myKeys, setMyKeys] = useState<{
@@ -180,6 +181,10 @@ const Dashboard = () => {
     setPassword(e.target.value);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
   const handleSharedKeyDown = () => {
     if (sharedSecret) {
       const pemString = `-----BEGIN SHARED SECRET-----\n${btoa(
@@ -196,7 +201,7 @@ const Dashboard = () => {
   const handleRegister = () => {
     // removeFromSessionStorage("ld");
     // dispatch({ type: "logout" });
-    navigate(ROUTES.signup)
+    navigate(ROUTES.signup);
   };
 
   const handleClose = () => {
@@ -207,7 +212,7 @@ const Dashboard = () => {
     if (file) {
       // const verifyData = new FormData();
       // verifyData.append("image", file);
-      // verifyData.append("email", state.payload.email);
+      // verifyData.append("email", email);
 
       // callVerifyPost(verifyData)
       //   .then((resp) => {
@@ -304,8 +309,17 @@ const Dashboard = () => {
       <div className={style.inContainer}>
         <div className={style.firstStep}>
           <div className={style.title}>Step 1: Upload Image</div>
+          <div className={style.email}>
+            <Inputcomp
+              label="Email"
+              placeholder="Enter your Email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+            ></Inputcomp>
+          </div>
           <SingleFileUploader onValueChange={setFile} />
-          {file ? (
+          {file && email ? (
             <Buttoncomp
               label="Get Public Key"
               onClick={handlePubKeyGeneration}
