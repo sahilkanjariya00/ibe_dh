@@ -19,7 +19,7 @@ import {
 } from "../../Util/ibeCrypto";
 import { computeSharedSecret, generateDHKeys } from "../../Util/dh";
 import { decryptPrivateKeyLocally } from "../../Util/PrivateKey";
-// import { callVerifyPost } from "../../APIs/Register.api";
+import { callVerifyPost } from "../../APIs/Register.api";
 import { Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../Util/constants";
@@ -214,30 +214,34 @@ const Dashboard = () => {
 
   const handlePubKeyGeneration = () => {
     if (file) {
-      // const verifyData = new FormData();
-      // verifyData.append("image", file);
-      // verifyData.append("email", email);
+      const verifyData = new FormData();
+      verifyData.append("image", file);
+      verifyData.append("email", email);
 
-      // callVerifyPost(verifyData)
-      //   .then((resp) => {
-      //     const blob = new Blob([resp.data.public_key], {
-      //       type: "application/x-pem-file",
-      //     });
-      //     saveFile(blob, "publicKey.pem");
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      callVerifyPost(verifyData)
+        .then((resp) => {
+          const blob = new Blob([resp.data.public_key], {
+            type: "application/x-pem-file",
+          });
+          saveFile(blob, "publicKey.pem");
+          setAlertContent("Public key is generated.");
+          setShowAlert(true);
+        })
+        .catch((err) => {
+          setAlertContent(err.response.data.detail);
+          setShowAlert(true);
+          console.log(err.response.data.detail);
+        });
 
-      const blob = new Blob(
-        [
-          "-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAER+pgY3Hqykg/bgLHpsfs9Aj3LJOaBTjNCImGJWZUVTH/vBMhqVrHBG4b1ywORJnbvRXEJi5ZGqKCCr4ULSbpjw==-----END PUBLIC KEY-----",
-        ],
-        { type: "application/x-pem-file" }
-      );
-      saveFile(blob, "publicKey.pem");
-      setAlertContent("Public key is generated.");
-      setShowAlert(true);
+      // const blob = new Blob(
+      //   [
+      //     "-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAER+pgY3Hqykg/bgLHpsfs9Aj3LJOaBTjNCImGJWZUVTH/vBMhqVrHBG4b1ywORJnbvRXEJi5ZGqKCCr4ULSbpjw==-----END PUBLIC KEY-----",
+      //   ],
+      //   { type: "application/x-pem-file" }
+      // );
+      // saveFile(blob, "publicKey.pem");
+      // setAlertContent("Public key is generated.");
+      // setShowAlert(true);
     }
   };
 

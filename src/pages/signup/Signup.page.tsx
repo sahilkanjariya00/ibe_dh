@@ -5,7 +5,7 @@ import { Buttoncomp, CaptureImage, Inputcomp } from "../../stories";
 import { ERRORMESSAGES, ROUTES } from "../../Util/constants";
 // import { useAuthContext } from "../../hooks";
 import { useNavigate } from "react-router-dom";
-// import { callRegisterPost } from "../../APIs/Register.api";
+import { callRegisterPost } from "../../APIs/Register.api";
 import {
   decryptPrivateKey,
   encryptPrivateKeyLocally,
@@ -15,41 +15,72 @@ import { saveFile } from "../../Util/helper";
 type LoginFormType = {
   email: string;
   password: string;
-  image: File;
+  image: string;
 };
+
+// const base64ToFile = (base64: string, filename: string): File => {
+//   const arr = base64.split(',');
+//   const mime = (arr[0].match(/:(.*?);/) as RegExpMatchArray)[1];
+//   const bstr = atob(arr[1]);
+//   let n = bstr.length;
+//   const u8arr = new Uint8Array(n);
+  
+//   while (n--) {
+//     u8arr[n] = bstr.charCodeAt(n);
+//   }
+  
+//   return new File([u8arr], filename, { type: mime });
+// };
+
+// if (val.image instanceof File) {
+    //   registerData.append("image", val.image);
+    // } else if (typeof val.image === 'string') {
+    //   // If image is base64 string, convert to File object
+    //   const file = base64ToFile(val.image, 'profile.jpg');
+    //   registerData.append("image", file);
+    // }
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  
   // const { dispatch } = useAuthContext();
+
+  function base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+  
 
   // @ts-ignore
   const onSubmit = (val: LoginFormType) => {
-    // const registerData = new FormData();
-    // registerData.append("email", val.email);
-    // registerData.append("password", val.password);
+    const registerData = new FormData();
+    registerData.append("email", val.email);
+    registerData.append("password", val.password);
     // registerData.append("image", val.image);
+    const imageFile = base64ToFile(val.image, 'uploaded-image.jpeg');
+    registerData.append("image", imageFile);
 
-    // callRegisterPost(registerData)
-    //   .then((resp) => {
-    //     handleDecryption(
-    //       resp.data.encrypted_private_key,
-    //       resp.data.encryption_salt,
-    //       val.password
-    //     );
-    //     navigate(ROUTES.default);
-    //     dispatch({ type: "login", payload: { email: val.email } });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-      handleDecryption(
-        "9d0f9daeaf7a7c98b9920c60a9d4faf26eece5ff4925d3611cb7ab8066f7b17eeff6764869c17f5d6953e0fa2d26c3227998206b8d74a29b1bafa14b2d4df3339ce19b0f0c3a1067eb944df1fb7c6b43f897a8fcf9f2d4b5250704b5cf6504e29f560a00afecb6c2304de90ff32823c7e408f8dd4f1c428a259b55cc43441ef977931833bf1dc2bdea220aaf0ae2c83dc1dc0f0a066248e017b4ca3b321040657f59a2940502ae332013819a2be43f3633d12709b02be39726c2cd2c5f86bd49bea1c7c6503c62959b07ee720b65edf2d74a71556ff28f5e82921ce380035f9278b178488f976fcfb269616729d7bd03e363d984f611f9b0ef708edf89df61cdfbf0bf7ff12d732dd6f5e9c887",
-        "7d7f668848b46cf5621dbb13572c59b2",
-        "abc"
-      );
-      navigate(ROUTES.default);
-      // dispatch({ type: "login", payload: { email: val.email } });
+    callRegisterPost(registerData)
+      .then((resp) => {
+        handleDecryption(
+          resp.data.encrypted_private_key,
+          resp.data.encryption_salt,
+          val.password
+        );
+        navigate(ROUTES.default);
+        // dispatch({ type: "login", payload: { email: val.email } });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // Handles the private key decryption after receiving in the api

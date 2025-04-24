@@ -52,6 +52,20 @@ export default tseslint.config({
   },
 })
 ```
+
+## Commands to run docker
+# Build image
+git clone https://github.com/sahilmk/ibe_dh.git
+
+cd ibe_dh
+
+npm install
+
+npm run dev
+
+# Run container
+docker run -p 8080:80 my-vite-app
+
 ## Commands to run docker
 # Build image
 docker build -t my-vite-app .
