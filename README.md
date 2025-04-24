@@ -56,8 +56,11 @@ export default tseslint.config({
 ## Commands to run docker
 # Build image
 git clone https://github.com/sahilmk/ibe_dh.git
+
 cd ibe_dh
+
 npm install
+
 npm run dev
 
 # Run container
