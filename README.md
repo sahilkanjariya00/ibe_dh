@@ -1,77 +1,22 @@
-# React + TypeScript + Vite
+# Biometric Based Secure Key Establishment for Secure Key Exchange (Diffie Hellman)
+This project enables two parties to establish a shared Diffie–Hellman key by leveraging
+face-based IBE to protect each party’s half-key. Users first register by submitting a face
+image and password, the system extracts a biometric embedding, deterministically
+derives an IBE key pair from it, encrypts the private key under the user’s password, and
+stores the embedding and public key in database. Each user’s face image is captured, re-
+embedded and matched against the stored embedding; on successful verification, the stored public key is released. Each party then encrypts their Diffie–Hellman half-key
+under the other’s IBE public key. When both encrypted halves are exchanged, each side
+decrypts the received half with their IBE private key to compute the shared DH secret.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-
-## Commands to run docker
-# Build image
-git clone https://github.com/sahilmk/ibe_dh.git
-
-cd ibe_dh
-
+## Steps to run project.
 npm install
 
 npm run dev
 
-# Run container
-docker run -p 8080:80 my-vite-app
-
-## Commands to run docker
-# Build image
+## Build & run docker image
 docker build -t my-vite-app .
 
-# Run container
+### Run container
 docker run -p 8080:80 my-vite-app
 
-## Diffie hellman logic
-#end
+

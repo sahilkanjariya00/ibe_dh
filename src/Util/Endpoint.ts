@@ -1,4 +1,4 @@
-export const HostEndpoint = "http://172.20.10.2:8000";
+export const HostEndpoint = "http://127.0.0.1:8000";
 
 export const REGISTER = '/register';
 export const VERIFY = '/verify';
