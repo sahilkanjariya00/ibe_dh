@@ -1,4 +1,3 @@
-import React from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useLoaderContext } from "../../hooks";
 
