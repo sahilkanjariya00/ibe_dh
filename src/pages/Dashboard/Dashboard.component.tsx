@@ -23,6 +23,7 @@ import { callVerifyPost } from "../../APIs/Register.api";
 import { Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../Util/constants";
+import { useLoaderContext } from "../../hooks";
 
 type EncryptedType = {
   iv: string;
@@ -32,6 +33,7 @@ type EncryptedType = {
 
 const Dashboard = () => {
   // const { state, dispatch } = useAuthContext();
+  const {dispatch} = useLoaderContext();
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
@@ -214,6 +216,7 @@ const Dashboard = () => {
 
   const handlePubKeyGeneration = () => {
     if (file) {
+      dispatch({type: 'showloader'});
       const verifyData = new FormData();
       verifyData.append("image", file);
       verifyData.append("email", email);
@@ -225,10 +228,12 @@ const Dashboard = () => {
           });
           saveFile(blob, "publicKey.pem");
           setAlertContent("Public key is generated.");
+          dispatch({type: 'hideloader'});
           setShowAlert(true);
         })
         .catch((err) => {
           setAlertContent(err.response.data.detail);
+          dispatch({type: 'hideloader'});
           setShowAlert(true);
           console.log(err.response.data.detail);
         });

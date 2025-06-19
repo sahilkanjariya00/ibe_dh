@@ -11,6 +11,7 @@ import {
   encryptPrivateKeyLocally,
 } from "../../Util/PrivateKey";
 import { saveFile } from "../../Util/helper";
+import { useLoaderContext } from "../../hooks";
 
 type LoginFormType = {
   email: string;
@@ -44,6 +45,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   
   // const { dispatch } = useAuthContext();
+  const {dispatch} = useLoaderContext();
 
   function base64ToFile(base64: string, filename: string): File {
     const arr = base64.split(',');
@@ -61,6 +63,7 @@ const SignupPage = () => {
 
   // @ts-ignore
   const onSubmit = (val: LoginFormType) => {
+    dispatch({type: 'showloader'});
     const registerData = new FormData();
     registerData.append("email", val.email);
     registerData.append("password", val.password);
@@ -76,9 +79,11 @@ const SignupPage = () => {
           val.password
         );
         navigate(ROUTES.default);
+        dispatch({type: 'hideloader'});
         // dispatch({ type: "login", payload: { email: val.email } });
       })
       .catch((err) => {
+        dispatch({type: 'hideloader'});
         console.log(err);
       });
   };
