@@ -19,4 +19,5 @@ docker build -t my-vite-app .
 ### Run container
 docker run -p 8080:80 my-vite-app
 
-
+this is very helpful for authentication of the user
+React version is v.20
